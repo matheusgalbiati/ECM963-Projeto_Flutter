@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imdb/entities/serie.dart';
+import 'package:imdb/pages/tv_details_page.dart';
 import 'package:imdb/shared/app_colors.dart';
 import 'package:imdb/datasources/tmdb_api.dart';
 import 'package:imdb/widgets/serie_card.dart';
@@ -12,14 +13,12 @@ class TvPage extends StatefulWidget {
 }
 
 class _TvPageState extends State<TvPage> {
-
   bool isInitiated = false;
 
   List<Serie> series = [];
 
   @override
   Widget build(BuildContext context) {
-
     if (!isInitiated) {
       isInitiated = true;
       TMDB().getTrendingSeries().then((series) {
@@ -45,7 +44,7 @@ class _TvPageState extends State<TvPage> {
         Text(
           'Séries mais populares hoje',
           style: TextStyle(
-              color: AppColors.primaryYellow,
+              color: AppColors.primaryRed,
               fontSize: 15,
               fontWeight: FontWeight.normal),
         ),
@@ -54,16 +53,24 @@ class _TvPageState extends State<TvPage> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: series.length,
-            itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: SerieCard(serie: series[index]),
-            );
-          }),
+              itemCount: series.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SerieDetailsPage(serie: series[index])));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: SerieCard(serie: series[index]),
+                  ),
+                );
+              }),
         )
       ]),
     );
   }
 }
-

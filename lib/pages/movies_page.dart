@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imdb/entities/movie.dart';
+import 'package:imdb/pages/movies_details_page.dart';
 import 'package:imdb/shared/app_colors.dart';
 import 'package:imdb/datasources/tmdb_api.dart';
 import 'package:imdb/widgets/movie_card.dart';
@@ -12,14 +13,12 @@ class MoviesPage extends StatefulWidget {
 }
 
 class _MoviesPageState extends State<MoviesPage> {
-
   bool isInitiated = false;
 
   List<Movie> movies = [];
 
   @override
   Widget build(BuildContext context) {
-
     if (!isInitiated) {
       isInitiated = true;
       TMDB().getTrendingMovies().then((movies) {
@@ -45,7 +44,7 @@ class _MoviesPageState extends State<MoviesPage> {
         Text(
           'Filmes mais populares hoje',
           style: TextStyle(
-              color: AppColors.primaryYellow,
+              color: AppColors.primaryRed,
               fontSize: 15,
               fontWeight: FontWeight.normal),
         ),
@@ -54,16 +53,20 @@ class _MoviesPageState extends State<MoviesPage> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: movies.length,
-            itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: MovieCard(movie: movies[index]),
-            );
-          }),
+              itemCount: movies.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MovieDetailsPage(movie: movies[index])));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: MovieCard(movie: movies[index]),
+                  ),
+                );
+              }),
         )
       ]),
     );
   }
 }
-

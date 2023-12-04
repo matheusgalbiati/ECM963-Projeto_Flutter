@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imdb/entities/person.dart';
+import 'package:imdb/pages/person_details_page.dart';
 import 'package:imdb/shared/app_colors.dart';
 import 'package:imdb/datasources/tmdb_api.dart';
 import 'package:imdb/widgets/person_card.dart';
@@ -12,14 +13,12 @@ class PeoplePage extends StatefulWidget {
 }
 
 class _PeoplePageState extends State<PeoplePage> {
-
   bool isInitiated = false;
 
   List<Person> people = [];
 
   @override
   Widget build(BuildContext context) {
-
     if (!isInitiated) {
       isInitiated = true;
       TMDB().getTrendingPeople().then((people) {
@@ -45,7 +44,7 @@ class _PeoplePageState extends State<PeoplePage> {
         Text(
           'Pessoas mais populares hoje',
           style: TextStyle(
-              color: AppColors.primaryYellow,
+              color: AppColors.primaryRed,
               fontSize: 15,
               fontWeight: FontWeight.normal),
         ),
@@ -54,16 +53,25 @@ class _PeoplePageState extends State<PeoplePage> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: people.length,
-            itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: PersonCard(person: people[index]),
-            );
-          }),
+              itemCount: people.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PersonDetailsPage(person: people[index]),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: PersonCard(person: people[index]),
+                  ),
+                );
+              }),
         )
       ]),
     );
   }
 }
-

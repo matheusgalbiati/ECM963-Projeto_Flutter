@@ -3,6 +3,9 @@ import 'package:imdb/datasources/tmdb_api.dart';
 import 'package:imdb/entities/movie.dart';
 import 'package:imdb/entities/person.dart';
 import 'package:imdb/entities/serie.dart';
+import 'package:imdb/pages/movies_details_page.dart';
+import 'package:imdb/pages/person_details_page.dart';
+import 'package:imdb/pages/tv_details_page.dart';
 import 'package:imdb/shared/app_colors.dart';
 import 'package:imdb/widgets/movie_card.dart';
 import 'package:imdb/widgets/person_card.dart';
@@ -19,7 +22,7 @@ class _SearchPageState extends State<SearchPage> {
 
   final textController = TextEditingController();
 
-  List<String> searchTypes = ['Filmes', 'Séries', 'Pessoas'];
+  List<String> searchTypes = ['Filmes', 'Series', 'Pessoas'];
   String selectedOption = 'Filmes';
 
   List<Movie> movies = [];
@@ -55,7 +58,7 @@ class _SearchPageState extends State<SearchPage> {
                             case 'Filmes':
                               movies = await TMDB().searchMoviesByText(textController.text);
                               break;
-                            case 'Séries':
+                            case 'Series':
                               series = await TMDB().searchSeriesByText(textController.text);
                               break;
                             case 'Pessoas':
@@ -107,14 +110,45 @@ class _SearchPageState extends State<SearchPage> {
           child: ListView.builder(
             itemCount: 
               selectedOption == 'Filmes' ? movies.length : 
-              selectedOption == 'Séries' ? series.length : 
+              selectedOption == 'Series' ? series.length : 
               people.length,
             itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: selectedOption == 'Filmes' ?  MovieCard(movie: movies[index]) :
-              selectedOption == 'Séries' ? SerieCard(serie: series[index]) :
-              PersonCard(person: people[index]),
+            return GestureDetector(
+              onTap: () {
+                switch (selectedOption) {
+                  case 'Filmes':
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieDetailsPage(movie: movies[index]),
+                      ),
+                    );
+                    break;
+                  case 'Series':
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SerieDetailsPage(serie: series[index]),
+                      ),
+                    );
+                    break;
+                  case 'Pessoas':
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PersonDetailsPage(person: people[index]),
+                      ),
+                    );
+                    break;
+                  default:
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: selectedOption == 'Filmes' ?  MovieCard(movie: movies[index]) :
+                selectedOption == 'Series' ? SerieCard(serie: series[index]) :
+                PersonCard(person: people[index]),
+              ),
             );
           }),
         )
